@@ -33,13 +33,13 @@ jobs:
         with:
           enable-cache: true
 
-      - name: Install dependencies with uv
+      - name: Install dependencies con uv
         run: uv venv && uv sync
 
-      - name: Run Make command (with debug)
+      - name: Run make command (con debug)
         run: |
           set -x  # Muestra los comandos que se ejecutan
-          make validations || (echo "❌ Make command failed"; exit 1)
+          make validations_git || (echo "Make command failed"; exit 1)
 
       - name: Commit generated data
         run: |

@@ -34,10 +34,14 @@ carga_csv:
 	uv run main.py --yaml ./pipelines/carga/csv/agg_campaign_table_csv.yaml
 
 validations: 
-	uv run main.py --yaml ./pipelines/validaciones/validacion_campaign.yaml
-#	uv run main.py --yaml ./pipelines/validaciones/validacion_clients_gold.yaml
-#	uv run main.py --yaml ./pipelines/validaciones/validacion_messages_gold.yaml
+	uv run main.py --yaml ./pipelines/validaciones/validacion_campaign.yaml --ver-cli
+	uv run main.py --yaml ./pipelines/validaciones/validacion_clients_gold.yaml
+	uv run main.py --yaml ./pipelines/validaciones/validacion_messages_gold.yaml
 
+validations_git:
+	@echo "Ejecutando validaciones..."
+	uv run main.py --yaml ./pipelines/validaciones/validacion_campaign.yaml || (echo "❌ Error ejecutando validaciones:" && cat uv.log && exit 1)
+	
 tests: 
 	uv run -m pytest
 
