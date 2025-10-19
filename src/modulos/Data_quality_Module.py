@@ -86,7 +86,7 @@ class DataQualityNode(BaseNode):
                     
                     else:
                         estado = "FALLA"
-                        detalle = f"Valores no corresponden a booleanos"
+                        detalle = "Valores no corresponden a booleanos"
                 
                 except Exception as e:
                     estado = "FALLA"
