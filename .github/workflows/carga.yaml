@@ -38,7 +38,8 @@ jobs:
 
       - name: Run make command (con debug)
         run: |
-          set -x  # Muestra los comandos que se ejecutan
+          set -x
+          export PYTHONPATH=$PWD
           make validations_git || (echo "Make command failed"; exit 1)
 
       - name: Commit generated data

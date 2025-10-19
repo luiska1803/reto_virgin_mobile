@@ -40,8 +40,9 @@ validations:
 
 validations_git:
 	@echo "Ejecutando validaciones..."
-	uv run main.py --yaml ./pipelines/validaciones/validacion_campaign.yaml || (echo "❌ Error ejecutando validaciones:" && cat uv.log && exit 1)
-	
+	set -x
+	uv run main.py --yaml ./pipelines/validaciones/validacion_campaign.yaml || (echo "Error ejecutando validaciones"; exit 1)
+
 tests: 
 	uv run -m pytest
 
