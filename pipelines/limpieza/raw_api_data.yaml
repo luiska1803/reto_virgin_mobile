@@ -1,0 +1,35 @@
+pipeline:
+  name: Raw_data_API
+  entrypoint: Lectura_API
+
+  nodes:
+    - name: Lectura_API
+      type: APIReaderNode
+      outputs: [Cambiar_Tipos]
+      params:
+        config:
+          chunk_mode: True
+          part_chunk: 0
+          chunksize: 1000000
+          api_url: https://68f193b8b36f9750dee9aa39.mockapi.io/users
+
+    - name: Cambiar_Tipos
+      type: CastColumnsNode
+      outputs: [Escritura_Parquet]
+      params:
+        config:
+          cast_map:
+            id: int
+            age: int
+            country: category
+            preferred_channel: category
+            loyalty_level: category
+            average_purchase_value: float
+            churn_risk: float
+
+    - name: Escritura_Parquet
+      type: ParquetWriterNode
+      params:
+        config:
+          mode: "a"
+          file_path: ${path_data_silver}/data_api.parquet

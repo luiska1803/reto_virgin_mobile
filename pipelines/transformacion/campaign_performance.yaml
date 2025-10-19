@@ -1,0 +1,22 @@
+pipeline:
+  name: pipeline_campaign_performance
+  entrypoint: Lectura_Messages_Parquet
+
+  nodes:
+
+    - name: Lectura_Messages_Parquet
+      type: ParquetReaderNode
+      outputs: [Obtener_datos_campaña]
+      params:
+        config:
+          file_paths: ${path_data_silver}/messages_cleared.parquet
+
+    - name: Obtener_datos_campaña
+      type: GetCampaignPerformanceNode
+      outputs: [Escritura_Campaign_performance]
+
+    - name: Escritura_Campaign_performance
+      type: ParquetWriterNode
+      params:
+        config:
+          file_path: ${path_data_gold}/parquet/campaign_performance_cleared.parquet

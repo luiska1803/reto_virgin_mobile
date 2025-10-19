@@ -1,0 +1,26 @@
+pipeline:
+  name: pipeline_prueba
+  entrypoint: Lectura_message_Parquet
+
+  nodes:
+
+    - name: Lectura_message_Parquet
+      type: ParquetReaderNode
+      outputs: [Dropeado_Columnas]
+      params:
+        config:
+          file_paths: ${path_data_gold}/parquet/messages_enriched.parquet
+    
+    - name: Dropeado_Columnas
+      type: DropColumnsNode
+      outputs: [Escritura_messages_csv]
+      params:
+        config:
+          columnas: 
+            - id
+
+    - name: Escritura_messages_csv
+      type: CSVWriterNode
+      params:
+        config:
+          file_path: ${path_data_gold}/csv/messages.csv

@@ -1,0 +1,42 @@
+pipeline:
+  name: pipeline_enriched_campaigns
+  entrypoint: Inicio
+
+  nodes:
+    - name: Inicio
+      type: DummyStartNode
+      outputs: [Lectura_messages, Lectura_campaign, lectura_client]
+
+    - name: Lectura_messages
+      type: ParquetReaderNode
+      outputs: [clear_messages_file]
+      params:
+        config:
+          salida: "data_1"
+          file_paths: ${path_data_silver}/messages_demo.parquet
+          
+    - name: Lectura_campaign
+      type: ParquetReaderNode
+      outputs: [clear_messages_file]
+      params:
+        config:
+          salida: "data_2"
+          file_paths: ${path_data_silver}/campaigns.parquet
+    
+    - name: lectura_client
+      type: ParquetReaderNode
+      outputs: [clear_messages_file]
+      params:
+        config:
+          salida: "data_3"
+          file_paths: ${path_data_silver}/client_first_purchase_date.parquet
+    
+    - name: clear_messages_file
+      type: clearMessagesNode
+      outputs: [Escritura_campaigns_gold]
+
+    - name: Escritura_campaigns_gold
+      type: ParquetWriterNode
+      params:
+        config:
+          file_path: ${path_data_silver}/messages_cleared.parquet

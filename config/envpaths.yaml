@@ -1,0 +1,7 @@
+paths:
+  local:
+    log_dir: ./logs
+    path_data_bronze: ./data/bronze_data
+    path_data_silver: ./data/silver_data
+    path_data_gold: ./data/gold_data
+    validation_path: ./data/validaciones

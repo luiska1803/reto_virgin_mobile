@@ -1,0 +1,27 @@
+[project]
+name = "virgin-mobile"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "asteval>=1.0.6",
+    "cerberus>=1.3.7",
+    "dotenv>=0.9.9",
+    "git-filter-repo>=2.47.0",
+    "ipywidgets>=8.1.7",
+    "kagglehub>=0.3.13",
+    "langchain>=0.3.27",
+    "langchain-aws>=0.2.35",
+    "langchain-openai>=0.3.35",
+    "pandas>=2.3.3",
+    "polars>=1.34.0",
+    "psycopg2-binary>=2.9.11",
+    "pyarrow>=21.0.0",
+    "pytest>=8.4.2",
+    "ruff>=0.14.1",
+    "seaborn>=0.13.2",
+    "setuptools>=80.9.0",
+    "sqlalchemy>=2.0.44",
+    "ydata-profiling>=4.17.0",
+]

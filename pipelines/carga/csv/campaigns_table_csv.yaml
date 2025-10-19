@@ -1,0 +1,27 @@
+pipeline:
+  name: pipeline_campaign_table_csv
+  entrypoint: Lectura_campaign_Parquet
+
+  nodes:
+
+    - name: Lectura_campaign_Parquet
+      type: ParquetReaderNode
+      outputs: [Dropeado_Columnas]
+      params:
+        config:
+          file_paths: ${path_data_gold}/parquet/campaigns_enriched.parquet
+    
+    - name: Dropeado_Columnas
+      type: DropColumnsNode
+      outputs: [Escritura_campaign_csv]
+      params:
+        config:
+          columnas: 
+            - started_at_holiday
+            - finished_at_holiday
+
+    - name: Escritura_campaign_csv
+      type: CSVWriterNode
+      params:
+        config:
+          file_path: ${path_data_gold}/csv/campaign.csv

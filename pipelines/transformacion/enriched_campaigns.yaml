@@ -1,0 +1,40 @@
+pipeline:
+  name: pipeline_enriched_campaigns
+  entrypoint: Inicio
+
+  nodes:
+    - name: Inicio
+      type: DummyStartNode
+      outputs: [Lectura_Parquet, Lectura_API]
+
+    - name: Lectura_Parquet
+      type: ParquetReaderNode
+      outputs: [Set_Festivos]
+      params:
+        config:
+          salida: "data_1"
+          file_paths: ${path_data_silver}/campaigns.parquet
+
+    - name: Lectura_API
+      type: ParquetReaderNode
+      outputs: [Set_Festivos]
+      params:
+        config:
+          salida: "data_2"
+          file_paths: ${path_data_silver}/holidays.parquet
+    
+    - name: Set_Festivos
+      type: getHolidaysNode
+      outputs: [Escritura_campaigns_gold]
+      params:
+        config:
+          list_col_dates:
+            - started_at
+            - finished_at
+          col_holidays: date
+
+    - name: Escritura_campaigns_gold
+      type: ParquetWriterNode
+      params:
+        config:
+          file_path: ${path_data_gold}/parquet/campaigns_enriched.parquet

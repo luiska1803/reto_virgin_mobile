@@ -1,0 +1,19 @@
+pipeline:
+  name: pipeline_prueba
+  entrypoint: Lectura_campaing_performance_Parquet
+
+  nodes:
+
+    - name: Lectura_campaing_performance_Parquet
+      type: ParquetReaderNode
+      outputs: [Escritura_BD]
+      params:
+        config:
+          file_paths: ${path_data_gold}/parquet/campaign_performance_cleared.parquet
+
+    - name: Escritura_BD
+      type: DatabaseNode
+      params:
+        config:
+          db_type: postgresql
+          table: agg_campaign_performance

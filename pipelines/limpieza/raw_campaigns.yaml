@@ -1,0 +1,63 @@
+pipeline:
+  name: Raw_data_campaigns
+  entrypoint: Lectura_campaigns_file
+
+  nodes:
+    - name: Lectura_campaigns_file
+      type: CSVReaderNode
+      outputs: [Dropeado_Columnas]
+      params:
+        config:
+          file_paths: ${path_data_bronze}/campaigns.csv
+    
+    - name: Dropeado_Columnas
+      type: DropColumnsNode
+      outputs: [Dropeado_nulos]
+      params:
+        config:
+          columnas: 
+            - position
+            - is_test
+            - hour_limit
+            - ab_test
+    
+    - name: Dropeado_nulos
+      type: DropNullteNode
+      outputs: [Cambiar_Tipos]
+      params:
+        config:
+          columnas:
+            - started_at
+          fillna: 
+            total_count: 0
+            subject_length: 0
+            channel: "unknow"
+            topic: "unknow"
+          
+    - name: Cambiar_Tipos
+      type: CastColumnsNode
+      outputs: [Escritura_campaigns_Parquet]
+      params:
+        config:
+          cast_map:
+            id: int
+            total_count: int
+            subject_length: int
+            campaign_type: category
+            channel: category
+            started_at: timestamp
+            finished_at: timestamp
+            subject_with_personalization: bool
+            subject_with_deadline: bool
+            subject_with_emoji: bool
+            subject_with_bonuses: bool
+            subject_with_discount: bool
+            subject_with_saleout: bool
+            warmup_mode: bool
+
+    - name: Escritura_campaigns_Parquet
+      type: ParquetWriterNode
+      params:
+        config:
+          mode: "a"
+          file_path: ${path_data_silver}/campaigns.parquet

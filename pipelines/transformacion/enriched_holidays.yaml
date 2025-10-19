@@ -1,0 +1,23 @@
+pipeline:
+  name: pipeline_enriched_holidays
+  entrypoint: Lectura_holidays_Parquet
+
+  nodes:
+
+    - name: Lectura_holidays_Parquet
+      type: ParquetReaderNode
+      outputs: [Obtener_datos_festivos]
+      params:
+        config:
+          file_paths: ${path_data_silver}/holidays.parquet
+
+    - name: Obtener_datos_festivos
+      type: HolidaysEnrichedNode
+      outputs: [Escritura_holidays_enriched]
+
+    - name: Escritura_holidays_enriched
+      type: ParquetWriterNode
+      params:
+        config:
+          mode: "a"
+          file_path: ${path_data_gold}/parquet/holidays_enriched.parquet

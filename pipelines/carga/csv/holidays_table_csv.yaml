@@ -1,0 +1,18 @@
+pipeline:
+  name: pipeline_holidays_csv
+  entrypoint: Lectura_holidays_Parquet
+
+  nodes:
+
+    - name: Lectura_holidays_Parquet
+      type: ParquetReaderNode
+      outputs: [Escritura_holidays_csv]
+      params:
+        config:
+          file_paths: ${path_data_gold}/parquet/holidays_enriched.parquet
+
+    - name: Escritura_holidays_csv
+      type: CSVWriterNode
+      params:
+        config:
+          file_path: ${path_data_gold}/csv/holidays.csv

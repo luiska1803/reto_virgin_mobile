@@ -1,0 +1,42 @@
+pipeline:
+  name: pipeline_enriched_messages
+  entrypoint: Inicio
+
+  nodes:
+    - name: Inicio
+      type: DummyStartNode
+      outputs: [Lectura_Messages, Lectura_Holidays]
+
+    - name: Lectura_Messages
+      type: ParquetReaderNode
+      outputs: [Set_Festivos]
+      params:
+        config:
+          salida: "data_1"
+          file_paths: ${path_data_silver}/messages_cleared.parquet
+
+    - name: Lectura_Holidays
+      type: ParquetReaderNode
+      outputs: [Set_Festivos]
+      params:
+        config:
+          salida: "data_2"
+          file_paths: ${path_data_silver}/holidays.parquet
+    
+    - name: Set_Festivos
+      type: getHolidaysNode
+      outputs: [Escritura_messages_gold]
+      params:
+        config:
+          list_col_dates:
+            - date
+            - sent_at
+            - opened_first_time_at
+            - opened_last_time_at
+          col_holidays: date
+    
+    - name: Escritura_messages_gold
+      type: ParquetWriterNode
+      params:
+        config:
+          file_path: ${path_data_gold}/parquet/messages_enriched.parquet

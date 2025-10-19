@@ -1,0 +1,28 @@
+pipeline:
+  name: pipeline_carga_campaign_table
+  entrypoint: Lectura_campaign_Parquet
+
+  nodes:
+
+    - name: Lectura_campaign_Parquet
+      type: ParquetReaderNode
+      outputs: [Dropeado_Columnas]
+      params:
+        config:
+          file_paths: ${path_data_gold}/parquet/campaigns_enriched.parquet
+    
+    - name: Dropeado_Columnas
+      type: DropColumnsNode
+      outputs: [Escritura_campaign_table]
+      params:
+        config:
+          columnas: 
+            - started_at_holiday
+            - finished_at_holiday
+
+    - name: Escritura_campaign_table
+      type: DatabaseNode
+      params:
+        config:
+          db_type: postgresql
+          table: campaign

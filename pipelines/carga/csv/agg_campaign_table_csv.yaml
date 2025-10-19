@@ -1,0 +1,18 @@
+pipeline:
+  name: pipeline_carga_agg_table_csv
+  entrypoint: Lectura_campaing_performance_Parquet
+
+  nodes:
+
+    - name: Lectura_campaing_performance_Parquet
+      type: ParquetReaderNode
+      outputs: [Escritura_agg_campaign_performance_csv]
+      params:
+        config:
+          file_paths: ${path_data_gold}/parquet/campaign_performance_cleared.parquet
+
+    - name: Escritura_agg_campaign_performance_csv
+      type: CSVWriterNode
+      params:
+        config:
+          file_path: ${path_data_gold}/csv/agg_campaign_performance.csv

@@ -1,0 +1,47 @@
+pipeline:
+  name: pipeline_prueba
+  entrypoint: Lectura_campaign_gold
+
+  nodes:
+
+    - name: Lectura_campaign_gold
+      type: CSVReaderNode
+      outputs: [Validaciones]
+      params:
+        config:
+          file_paths: ${path_data_gold}/csv/campaign.csv
+    
+    - name: Validaciones
+      type: DataQualityNode
+      outputs: [Escritura_validacion_campaign_csv]
+      params:
+        config:
+          reglas:
+          - columna: id
+            regla: no_nulos
+          - columna: channel
+            regla: no_nulos
+          - columna: started_at
+            regla: formato_fecha
+          - columna: finished_at
+            regla: nulos_mayor_95
+          - columna: subject_with_personalization
+            regla: validacion_boolean
+          - columna: subject_with_deadline
+            regla: validacion_boolean
+          - columna: subject_with_emoji
+            regla: validacion_boolean
+          - columna: subject_with_bonuses
+            regla: validacion_boolean
+          - columna: subject_with_discount
+            regla: validacion_boolean
+          - columna: subject_with_saleout
+            regla: validacion_boolean
+          - columna: warmup_mode
+            regla: validacion_boolean
+
+    - name: Escritura_validacion_campaign_csv
+      type: CSVWriterNode
+      params:
+        config:
+          file_path: ${validation_path}/campaign.csv

@@ -1,0 +1,34 @@
+pipeline:
+  name: Raw_data_holidays
+  entrypoint: Lectura_Holidays_file
+
+  nodes:
+    - name: Lectura_Holidays_file
+      type: CSVReaderNode
+      outputs: [Eliminar_duplicados]
+      params:
+        config:
+          file_paths: ${path_data_bronze}/holidays.csv
+      
+    - name: Eliminar_duplicados
+      type: DropDuplicateNode
+      outputs: [Cambiar_Tipos]
+      params:
+        config:
+          columnas:
+            - date
+
+    - name: Cambiar_Tipos
+      type: CastColumnsNode
+      outputs: [Escritura_Holidays_Parquet]
+      params:
+        config:
+          cast_map:
+              date: timestamp
+
+    - name: Escritura_Holidays_Parquet
+      type: ParquetWriterNode
+      params:
+        config:
+          mode: "a"
+          file_path: ${path_data_silver}/holidays.parquet

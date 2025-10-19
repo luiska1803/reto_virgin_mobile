@@ -1,0 +1,33 @@
+pipeline:
+  name: pipeline_prueba
+  entrypoint: Lectura_clients_gold
+
+  nodes:
+
+    - name: Lectura_clients_gold
+      type: CSVReaderNode
+      outputs: [Validaciones]
+      params:
+        config:
+          file_paths: ${path_data_gold}/csv/clients.csv
+    
+    - name: Validaciones
+      type: DataQualityNode
+      outputs: [Escritura_validacion_clients_csv]
+      params:
+        config:
+          reglas:
+          - columna: client_id
+            regla: no_nulos
+          - columna: age
+            regla: edad_mayor_18
+          - columna: average_purchase_value
+            regla: valores_positivos
+          - columna: first_purchase_date
+            regla: formato_fecha
+
+    - name: Escritura_validacion_clients_csv
+      type: CSVWriterNode
+      params:
+        config:
+          file_path: ${validation_path}/clients.csv

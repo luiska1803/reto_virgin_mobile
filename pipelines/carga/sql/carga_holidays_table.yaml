@@ -1,0 +1,19 @@
+pipeline:
+  name: pipeline_holidays_table
+  entrypoint: Lectura_holidays_Parquet
+
+  nodes:
+
+    - name: Lectura_holidays_Parquet
+      type: ParquetReaderNode
+      outputs: [Escritura_holidays_table]
+      params:
+        config:
+          file_paths: ${path_data_gold}/parquet/holidays_enriched.parquet"
+
+    - name: Escritura_holidays_table
+      type: DatabaseNode
+      params:
+        config:
+          db_type: postgresql
+          table: holidays

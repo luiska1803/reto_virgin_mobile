@@ -1,0 +1,22 @@
+pipeline:
+  name: pipeline_carga_clients_table
+  entrypoint: Lectura_holidays_Parquet
+
+  nodes:
+
+    - name: Lectura_holidays_Parquet
+      type: ParquetReaderNode
+      outputs: [Escritura_clients_table]
+      params:
+        config:
+          chunk_mode: True
+          part_chunk: 0
+          chunksize: 200000
+          file_paths: ${path_data_gold}/parquet/client_enriched.parquet
+
+    - name: Escritura_clients_table
+      type: DatabaseNode
+      params:
+        config:
+          db_type: postgresql
+          table: clients

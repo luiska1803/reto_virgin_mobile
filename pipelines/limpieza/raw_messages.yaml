@@ -1,0 +1,70 @@
+pipeline:
+  name: Raw_data_messages
+  entrypoint: Lectura_messages_file
+
+  nodes:
+    - name: Lectura_messages_file
+      type: CSVReaderNode
+      outputs: [Dropeado_Columnas]
+      params:
+        config:
+          chunk_mode: True
+          part_chunk: 9
+          chunksize: 1000000
+          file_paths: ${path_data_bronze}/messages-demo.csv
+    
+    - name: Dropeado_Columnas
+      type: DropColumnsNode
+      outputs: [Dropeado_nulos]
+      params:
+        config:
+          columnas: 
+            - category
+            - created_at
+            - updated_at
+            - clicked_first_time_at
+            - clicked_last_time_at
+            - unsubscribed_at
+            - hard_bounced_at
+            - soft_bounced_at
+            - complained_at
+            - blocked_at
+            - purchased_at
+
+    - name: Dropeado_nulos
+      type: DropNullteNode
+      outputs: [Cambiar_Tipos]
+      params:
+        config:
+          fillna: 
+            platform: "unknow"
+            email_provider: "unknow"
+
+    - name: Cambiar_Tipos
+      type: CastColumnsNode
+      outputs: [Escritura_messages_Parquet]
+      params:
+        config:
+          cast_map:
+              id: int
+              campaign_id: int
+              client_id: int
+              date: timestamp
+              sent_at: timestamp
+              opened_first_time_at: timestamp
+              opened_last_time_at: timestamp
+              is_opened: bool
+              is_clicked: bool
+              is_unsubscribed: bool
+              is_hard_bounced: bool
+              is_soft_bounced: bool
+              is_complained: bool
+              is_blocked: bool
+              is_purchased: bool
+
+    - name: Escritura_messages_Parquet
+      type: ParquetWriterNode
+      params:
+        config:
+          mode: "a"
+          file_path: ${path_data_silver}/messages_demo.parquet

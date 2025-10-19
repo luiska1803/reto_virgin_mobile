@@ -1,0 +1,67 @@
+pipeline:
+  name: pipeline_enriched_clients
+  entrypoint: Inicio
+
+  nodes:
+    - name: Inicio
+      type: DummyStartNode
+      outputs: [Lectura_Parquet, Lectura_API]
+
+    - name: Lectura_Parquet
+      type: ParquetReaderNode
+      outputs: [Unir_Datos]
+      params:
+        config:
+          salida: "data_1"
+          file_paths: ${path_data_silver}/client_first_purchase_date.parquet
+
+    - name: Lectura_API
+      type: ParquetReaderNode
+      outputs: [Unir_Datos]
+      params:
+        config:
+          salida: "data_2"
+          file_paths: ${path_data_silver}/data_api.parquet
+    
+    - name: Unir_Datos
+      type: MergeDataNode
+      outputs: [Dropeado_nulos]
+      params:
+        config:
+          how: left
+          left_on: "client_id"
+          right_on: "id"
+    
+    - name: Dropeado_nulos
+      type: DropNullteNode
+      outputs: [Cambiar_Tipos]
+      params:
+        config:
+          fillna: 
+            age: 18 # Esto con el fin de establecer un "minimo" de edad inventado
+            churn_risk: 0.0
+            average_purchase_value: 0.0
+            gender: "other" 
+            country: "Colombia" #Se asume que los clientes que no se sabe la ciudad son de Bogota, Colombia
+            city: "Bogotá"
+            preferred_channel: "unknow"
+            loyalty_level: "unsubscribed" # Se le asigna unsubscribed a los usuarios que no tienen loyalty
+    
+    - name: Cambiar_Tipos
+      type: CastColumnsNode
+      outputs: [Escritura_Users_gold]
+      params:
+        config:
+          cast_map:
+            age: int
+            gender: category
+            preferred_channel: category
+            loyalty_level: category
+            average_purchase_value: float
+            churn_risk: float
+
+    - name: Escritura_Users_gold
+      type: ParquetWriterNode
+      params:
+        config:
+          file_path: ${path_data_gold}/parquet/client_enriched.parquet

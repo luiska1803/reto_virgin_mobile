@@ -1,0 +1,53 @@
+pipeline:
+  name: pipeline_prueba
+  entrypoint: Lectura_messages_gold
+
+  nodes:
+
+    - name: Lectura_messages_gold
+      type: CSVReaderNode
+      outputs: [Validaciones]
+      params:
+        config:
+          file_paths: ${path_data_gold}/csv/messages.csv
+    
+    - name: Validaciones
+      type: DataQualityNode
+      outputs: [Escritura_validacion_messages_csv]
+      params:
+        config:
+          reglas:
+          - columna: client_id
+            regla: no_nulos
+          - columna: campaign_id
+            regla: no_nulos
+          - columna: channel
+            regla: no_nulos
+          - columna: platform
+            regla: no_nulos
+          - columna: date
+            regla: formato_fecha
+          - columna: opened_first_time_at
+            regla: nulos_mayor_95
+          - columna: is_opened
+            regla: validacion_boolean
+          - columna: is_clicked
+            regla: validacion_boolean
+          - columna: is_unsubscribed
+            regla: validacion_boolean
+          - columna: is_hard_bounced
+            regla: validacion_boolean
+          - columna: is_soft_bounced
+            regla: validacion_boolean
+          - columna: is_complained
+            regla: validacion_boolean
+          - columna: is_blocked
+            regla: validacion_boolean
+          - columna: is_purchased
+            regla: validacion_boolean
+
+    - name: Escritura_validacion_messages_csv
+      type: CSVWriterNode
+      params:
+        config:
+          file_path: ${validation_path}/messages.csv

@@ -1,0 +1,18 @@
+pipeline:
+  name: pipeline_carga_clients_csv
+  entrypoint: Lectura_holidays_Parquet
+
+  nodes:
+
+    - name: Lectura_holidays_Parquet
+      type: ParquetReaderNode
+      outputs: [Escritura_clients_csv]
+      params:
+        config:
+          file_paths: ${path_data_gold}/parquet/client_enriched.parquet
+
+    - name: Escritura_clients_csv
+      type: CSVWriterNode
+      params:
+        config:
+          file_path: ${path_data_gold}/csv/clients.csv

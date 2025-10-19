@@ -1,0 +1,17 @@
+.pytest_cache/
+.ruff_cache/
+.venv
+.env
+logs/
+src/__pycache__/
+src/modulos/__pycache__/
+src/pipeline_engine/__pycache__/
+src/submodulos/__pycache__/
+src/submodulos/databases/__pycache__/
+src/submodulos/llm/__pycache__/
+test/__pycache__/
+data/bronze_data/*.csv
+data/silver_data/*.parquet
+data/gold_data/parquet/*.parquet
+data/gold_data/csv/clients.csv
+data/gold_data/csv/messages.csv 

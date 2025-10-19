@@ -1,0 +1,26 @@
+pipeline:
+  name: Raw_data_Client_file
+  entrypoint: Lectura_clients_file
+
+  nodes:
+    - name: Lectura_clients_file
+      type: CSVReaderNode
+      outputs: [Cambiar_Tipos]
+      params:
+        config:
+          file_paths: ${path_data_bronze}/client_first_purchase_date.csv
+      
+    - name: Cambiar_Tipos
+      type: CastColumnsNode
+      outputs: [Escritura_client_Parquet]
+      params:
+        config:
+          cast_map:
+              first_purchase_date: timestamp
+
+    - name: Escritura_client_Parquet
+      type: ParquetWriterNode
+      params:
+        config:
+          mode: "a"
+          file_path: ${path_data_silver}/client_first_purchase_date.parquet

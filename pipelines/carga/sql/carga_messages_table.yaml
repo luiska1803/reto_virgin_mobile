@@ -1,0 +1,34 @@
+pipeline:
+  name: pipeline_prueba
+  entrypoint: Lectura_message_Parquets
+
+  nodes:
+
+    - name: Lectura_message_Parquets
+      type: ParquetReaderNode
+      outputs: [Dropeado_Columnas]
+      params:
+        config:
+          chunk_mode: True
+          part_chunk: 0
+          chunksize: 120000
+          file_paths: ${path_data_gold}/parquet/messages_enriched.parquet
+    
+    - name: Dropeado_Columnas
+      type: DropColumnsNode
+      outputs: [Escritura_BD]
+      params:
+        config:
+          columnas: 
+            - id
+            - date_holiday
+            - sent_at_holiday
+            - opened_first_time_at_holiday
+            - opened_last_time_at_holiday
+
+    - name: Escritura_BD
+      type: DatabaseNode
+      params:
+        config:
+          db_type: postgresql
+          table: messages
