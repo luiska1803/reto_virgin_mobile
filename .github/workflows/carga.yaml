@@ -1,10 +1,16 @@
-name: CI/CD - Run Make and Commit Data
+name: Make_run
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - dev
+  
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+      - dev
+
   workflow_dispatch: 
 
 permissions:
@@ -12,13 +18,12 @@ permissions:
 
 jobs:
   build:
-    tests:
-      runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-      steps:
+    steps: 
       - uses: actions/checkout@v5
 
-      - name: "Set up Python"
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version-file: ".python-version"
@@ -32,8 +37,7 @@ jobs:
         run: uv venv && uv sync
 
       - name: Run Make command
-        run: |
-          make validations
+        run: make validations
 
       - name: Commit generated data
         run: |
