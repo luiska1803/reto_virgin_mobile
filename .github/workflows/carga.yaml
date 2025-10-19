@@ -36,8 +36,10 @@ jobs:
       - name: Install dependencies with uv
         run: uv venv && uv sync
 
-      - name: Run Make command
-        run: make validations
+      - name: Run Make command (with debug)
+        run: |
+          set -x  # Muestra los comandos que se ejecutan
+          make validations || (echo "❌ Make command failed"; exit 1)
 
       - name: Commit generated data
         run: |
