@@ -8,12 +8,11 @@ El Pipeline diseñado permite ejecutar flujos de trabajo complejos de manera par
 
 ## Características
 
-- **Arquitectura Modular / Nodular**: Nodos reutilizables para diferentes operaciones (lectura/escritura de datos, transformaciones generales y hechas a la medida, integración con LLMs, integracion con Bases de datos)
+- **Arquitectura Modular / Nodular**: Nodos reutilizables para diferentes operaciones (lectura/escritura de datos, transformaciones generales y hechas a la medida, integracion con Bases de datos)
 - **Ejecución Paralela**: Motor de pipelines que ejecuta nodos concurrentemente usando ThreadPoolExecutor, el cual es un modulo estandar para la ejecución de tareas en modo paralelo. Se debe tener en cuenta cuantos hilos se maneja ya que si se esta trabajando en un ambiente local, el número de hilos dependera de los nucleos del CPU.
-- **Configuración Declarativa**: Pipelines definidos en archivos YAML, los cuales representan los pasos a seguir en el pipeline, estos trabajos pueden ser sencillos desde la lectura de una API o un archivo CSV, hasta complejos como la integracion con modelos LLM.
+- **Configuración Declarativa**: Pipelines definidos en archivos YAML, los cuales representan los pasos a seguir en el pipeline, estos trabajos pueden ser sencillos desde la lectura de una API o un archivo CSV, hasta complejos como la limpieza de los datos con parámetros especificos.
 - **Soporte Multi-Fuente**: El proyecto cuenta con Lectura/escritura de fuentes como CSV, Parquet, bases de datos PostgreSQL y APIs; si se requiere de una fuente extra, se puede desarrollar teniendo en cuenta el diseño de los demas Nodos.
 - **Transformaciones Avanzadas**: El proyecto a su vez realiza procesos de limpieza de datos, enriquecimiento, análisis de rendimiento de campañas. Estos procesos se pueden observar en la carpeta de datos. 
-- **Integración LLM**: Procesamiento de lenguaje natural para análisis de archivos segun el promt que se le indique.
 - **Logging Estructurado**: El proyecto cuenta con un sistema de logging configurable con salida a archivos o consola, por su defecto este se encuentra apagado con el fin de no llenar el CLI con todo el flujo de trabajo, sin embargo se puede habilitar ejecutando el pipeline con --ver-cli, lo cual encendera el proceso de lectura en el CLI.
 - **Validación de Tipos**: El proyecto realiza una verificación de compatibilidad de tipos entre nodos conectados, lo cual hace que se integre más facilmente a futuros nodos que se le puedan agregar. 
 
@@ -26,7 +25,6 @@ El Pipeline diseñado permite ejecutar flujos de trabajo complejos de manera par
 - **PostgreSQL** - Base de datos principal
 - **Docker** - Contenedorización de servicios
 - **Cerberus** - Validación de esquemas YAML
-- **LangChain** - Integración con modelos de lenguaje
 - **Pytest** - Testing
 - **Ruff** - Linting y formateo
 
@@ -147,13 +145,11 @@ reto_virgin_mobile/
 │   │   ├── API_Module.py
 │   │   ├── CSV_Module.py
 │   │   ├── DB_Module.py
-│   │   ├── LLM_Module.py
 │   │   ├── Parquet_Module.py
 │   │   ├── Transform_Module.py
 │   │   └── Utility_Module.py
 │   ├── submodulos/                 # Modulos creados para interaccion con los Nodos
-│   │   ├── databases/          
-│   │   └── llm/
+│   │   └── databases/          
 │   └── pipeline_engine/            # Motor de ejecución
 │       ├── PipelineEngine.py
 │       ├── PipelineLoader.py
@@ -206,9 +202,6 @@ El `PipelineEngine` es el corazón del sistema:
 
 #### Validaciones:
 - `DataQualityNode`: Validación de datos en las columnas de los dataframes
-
-#### IA
-- `LLMNode`: Integración con modelos de lenguaje (OpenAI, Bedrock)
 
 ### Definición de Pipeline
 
@@ -263,6 +256,7 @@ El proyecto incluye GitHub Actions para:
 - Ejecución automática de tests en push/PR
 - Validación de linting
 - Verificación de sintaxis
+- validaciones de archivos en gold_data
 
 
 ### Proceso para agregar Nuevos Nodos
